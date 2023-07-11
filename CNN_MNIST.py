@@ -6,12 +6,13 @@ import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
 
-'''==============================这段代码实现了一个简单的卷积神经网络，数据集为MNIST============================='''
+'''================这段代码实现了一个简单的卷积神经网络，数据集为MNIST==============='''
 # 超参数设置
 learning_rate = 1e-3
 batch_size = 64
-epoch = 10
+epoch = 3
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+load_model = True
 
 # 准备数据集
 train_set = torchvision.datasets.MNIST(root='./data', train=True, transform=torchvision.transforms.ToTensor(),
@@ -73,17 +74,16 @@ class CNN(nn.Module):
 model = CNN()
 optimizer = optim.Adam(params=model.parameters(), lr=learning_rate)
 loss_fn = nn.CrossEntropyLoss()
-
+if load_model:
+    load_checkpoint(torch.load("check_point.pth.tar"), model, optimizer)
 for i in range(epoch):
-    check_point = {"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict()}
-    #load_checkpoint(torch.load("check_point.pth.tar"), model, optimizer)
-    print("test_acc:{:2f}%".format(compute_acc(model, test_data) * 100))
+    if i == 0:
+        print(f"initial test acc:{compute_acc(model,train_data)*100:.2f}%")
     if i % 2 == 0:  # 每两轮保存一次,打印一次准确率
-        print("=>模型保存中.......<=")
+        check_point = {"model_state": model.state_dict(), "optimizer_state": optimizer.state_dict()}
+        print("=>模型保存中<=")
         save_checkpoint(check_point)
         print("=>模型已保存<=")
-        print("train_acc:{:2f}%".format(compute_acc(model,train_data)*100))
-        print("test_acc:{:2f}%".format(compute_acc(model,test_data)*100))
     for batch_id, (data, target) in enumerate(tqdm(train_data)):
         data.to(device=device)
         target.to(device=device)
@@ -92,10 +92,11 @@ for i in range(epoch):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-print("train acc:{:2f}%".format(compute_acc(model, train_data) * 100))
-print("test_acc:{:2f}%".format(compute_acc(model, test_data) * 100))
+    print("train acc:{:2f}%".format(compute_acc(model, train_data) * 100))
+    print("test_acc:{:2f}%".format(compute_acc(model, test_data) * 100))
 
 """
 1、CNN的性能确实比MLP的性能好很多，第一次跑10轮训练和测试都达到了100%的准确率（可能是偶然，不过也很强了）
+2、保存的模型参数文件会被复写，所以始终只有一个权重文件
+3、如果导入权重文件进行训练那么模型的初始化acc就会很高，因为继承了前几次训练好的参数，反之初始话acc就会很低（经过实验证明了这一点）
 """
