@@ -3,7 +3,7 @@ import torchvision.transforms as transforms
 from torchvision.utils import save_image
 
 operation = transforms.Compose([
-    transforms.RandomHorizontalFlip(p=0.5),
+    transforms.RandomHorizontalFlip(p=0.5),  # 进行随机水平翻转
     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),  # 随机改变图像的亮度、对比度、饱和度和色调
     transforms.ToTensor()
 ])
