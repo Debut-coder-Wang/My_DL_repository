@@ -25,12 +25,13 @@ My_transforms = A.Compose([
 # 将图片读入并将其转换到RGB空间
 img = cv2.imread("G_class.jpeg")
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-# 这里转换之后是一个字典，所以还要索引一下才能把图片找出来
+# 绘制组合图片直观展示转换效果
 plt.subplot(3, 4, 1)
 plt.imshow(img)
 plt.title("原图")
 times = 11
 for i in range(times):
+   # 这里转换之后是一个字典，所以还要索引一下才能把图片找出来
     transformed = My_transforms(image=img)
     transformed_img = transformed["image"]
     plt.subplot(3, 4, i + 2)
