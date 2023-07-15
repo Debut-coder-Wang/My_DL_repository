@@ -1,4 +1,4 @@
-# DeepLearning studying
+# To recording my CV learning
 This is a repository for deep learning code written by myself, it will witness my growth
 
 Follow the YouTube Aladdin Persson -- https://www.youtube.com/@AladdinPersson
