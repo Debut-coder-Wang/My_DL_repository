@@ -127,9 +127,9 @@ class GoogleNet(nn.Module):
         else:
             return x
 
-
-model = GoogleNet(in_channel=3, AUX_permit=True, num_class=1000).to(device)
-print(model)
+# 这里我把类别设置成了10，因为用的CIFAR10数据集，使用operation将size变成224x224，因为资源有限并且我只想验证模型是否能运行，所以没有下载imagenet这种巨大的数据集
+model = GoogleNet(in_channel=3, AUX_permit=True, num_class=10).to(device)  
+#print(model)
 
 
 def check_acc(model, loader):
