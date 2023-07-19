@@ -123,7 +123,7 @@ class GoogleNet(nn.Module):
         x = self.dropout(x)
         x = self.fc(x)
         if AUX and self.training:
-            return x*(0.3*aux1)*(0.3*aux2)
+            return x*+0.3*aux1+0.3*aux2  # 这里的返回值是将两个辅助分类器的输出以一个较小的权重加到输出x上，缓解网络过深梯度消失的现象
         else:
             return x
 
@@ -171,3 +171,12 @@ for i in range(epoch):
         optimizer.step()
     print(f"第{i + 1}轮训练结束，测试集准确率计算中......")
     print(f"测试集准确率：{check_acc(model=model, loader=test_loader) * 100:.2f}%")
+
+'''
+1、第一次训练把辅助分类器返回值那里的加法写成了乘法（梯度消失更加严重了）
+反映出来的现象就是无论怎么训练acc都是0，只返回最终的分类器值到预测阶段还是0
+可见GoogleNet的辅助分类器加上去是有原因的，改正之后模型能够正确训练了
+2、相比于VGG，GoogleNet的参数量确实下降了不少，同样的实验参数，VGG占了13.5G的现存，GoogleNet只占了5G不到
+所以验证了inception模块降低参数的有效性（我认为主要还是1x1卷积起了重要作用）
+3、启发：我认为inception这种思想可以使用到CV模型的方方面面，比较要想落地不能一味的把网络做深去刷acc
+'''
