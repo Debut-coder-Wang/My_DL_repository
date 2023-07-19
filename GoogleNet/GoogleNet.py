@@ -9,7 +9,7 @@ from tqdm import tqdm
 device = "cuda" if torch.cuda.is_available() else "cpu"
 epoch = 10
 learning_rate = 1e-3
-batch_size = 4
+batch_size = 64
 # 定义一个卷积操作，简化后面的代码
 class ConvolutionBlock(nn.Module):
     def __init__(self, in_channel, out_channel, **kwargs):
