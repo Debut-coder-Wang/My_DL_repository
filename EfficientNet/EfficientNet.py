@@ -60,7 +60,7 @@ class SqueezeExcitation(nn.Module):
         )
 
     def forward(self, x):
-        return self.SE(x)
+        return x * self.SE(x)
 
 
 # 下面构造的模块是EfficientNet中重复使用的MBConv和SE复合的卷积块，需要使用到SqueezeExcitation和CNNBlock
@@ -80,7 +80,7 @@ class InvertedResidualBlock(nn.Module):
         self.expand = in_channels != self.hidden_dim
         # 创建升维卷积块
         if self.expand:
-            self.expand_conv = CNNBlock(in_channel=in_channels, out_channel=self.hidden_dim, kernel_size=1, stride=1,
+            self.expand_conv = CNNBlock(in_channel=in_channels, out_channel=self.hidden_dim, kernel_size=3, stride=1,
                                         padding=1)
         # 复合卷积块，不管是MBConv1还是MBConv6都要用到
         self.conv = nn.Sequential(
@@ -165,7 +165,7 @@ class EfficientNet(nn.Module):
 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-version = "b7"
+version = "b0"
 _, resolution, _ = phi_values[version]
 batch_size, num_classes = 4, 10
 x = torch.randn((batch_size, 3, resolution, resolution)).to(device)
